@@ -48,7 +48,7 @@ const Create = () => {
                         value={stock} 
                         className='form-control' 
                         type='number' 
-                        onChange={ (e) => setStock(e.target.value)}/>
+                        onChange={ (e) => setStock(Number(e.target.value))}/>
                     </div>
 
                     <button type='submit' className='btn btn-primary'>Create</button>

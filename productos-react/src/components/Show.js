@@ -7,37 +7,59 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content'
 
 //Variable of Sweet Alert
-const MySwal = withReactContent(Swal)
+withReactContent(Swal)
 
 const Show = () => {
 
-    //Configure hooks
-    const [products, setProducts] = useState( [] )
+  //Configure hooks
+  const [products, setProducts] = useState([])
 
-    //Configure database reference
-    const productsCollection = collection(db, "products")
+  //Configure database reference
+  const productsCollection = collection(db, "products")
 
-    //Get all products
-    const getProducts = async () =>{
-        const data = await getDocs(productsCollection)
-        setProducts(
-          data.docs.map( (doc) => ({...doc.data(), id:doc.id}) )
-        )
-    
-    }
+  //Get all products
+  const getProducts = async () => {
+    const data = await getDocs(productsCollection)
+    setProducts(
+      data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+    )
 
-    //Delete product by id
-    const deleteProduct = async (id) =>{
-      const productDoc = doc(db, "products", id)
-      await deleteDoc(productDoc)
-      getProducts()
+  }
 
-    } 
+  const confirmDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteProduct(id)
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+      }
+    });
+  }
 
-    //Call getProducts
-    useEffect( () =>{
-        getProducts()
-    }, [])
+  //Delete product by id
+  const deleteProduct = async (id) => {
+    const productDoc = doc(db, "products", id)
+    await deleteDoc(productDoc)
+    getProducts()
+
+  }
+
+
+  //Call getProducts
+  useEffect(() => {
+    getProducts()
+  }, [])
 
   //Buttons and tables
   return (
@@ -46,6 +68,7 @@ const Show = () => {
         <div className='row'>
           <div className='col'>
             <div className='d-grid gap-2'>
+              {/*Button to create a product */}
               <Link to="/create" className='btn btn-secondary mt-2 mb-2'>Create</Link>
             </div>
             <table className='table table-dark table-hover'>
@@ -58,13 +81,13 @@ const Show = () => {
               </thead>
 
               <tbody>
-                {products.map( product => (
+                {products.map(product => (
                   <tr key={product.id}>
                     <td>{product.description}</td>
                     <td>{product.stock}</td>
                     <td>
                       <Link to={`/edit/${product.id}`} className='btn btn-secondary'><i class="fa-solid fa-pencil"></i></Link>
-                      <button onClick={ () => { deleteProduct(product.id)}} className='btn btn-danger'><i class="fa-regular fa-trash-can"></i></button>
+                      <button onClick={() => { confirmDelete(product.id) }} className='btn btn-danger'><i class="fa-regular fa-trash-can"></i></button>
                     </td>
                   </tr>
                 ))}
