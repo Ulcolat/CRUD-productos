@@ -1,7 +1,7 @@
 //Importing dependencies
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { doc, collection, getDocs, getDoc, deleteDoc } from 'firebase/firestore';
+import { doc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig/firebase';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content'
